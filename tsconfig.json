@@ -1,0 +1,33 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "lib": [
+      "ES2015",
+      "es2018",
+      "es6",
+      "dom"
+    ],
+    "strict": true,
+    "declaration": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "jsx": "react",
+    "baseUrl": "./",
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "experimentalDecorators": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@@/*": [
+        ".dumi/tmp/*"
+      ],
+      "@front-toolkit/jsx-style-px-to-tem-babel-plugin": [
+        "./packages/jsx-style-px-to-tem-babel-plugin/src/"
+      ]
+    }
+  },
+  "include": [
+    ".dumirc.ts",
+    "src/**/*"
+  ]
+}

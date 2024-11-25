@@ -91,7 +91,7 @@ export default function (_: any, options: inlineCssPxToRemOptions) {
         CONFIG_FILE_PATH,
         configFileContent.replace(
           /(CONFIG_OPTIONS = )([\s\S]+)/,
-          `$1${optionsString}\n`
+          `$1${optionsString};\n`
         )
       );
     } catch (e) {}

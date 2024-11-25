@@ -28,6 +28,7 @@
   },
   "include": [
     ".dumirc.ts",
-    "src/**/*"
+    "src/**/*",
+    "tests/**/*"
   ]
 }

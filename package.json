@@ -7,7 +7,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "dumi dev",
-    "build": "father build",
+    "build": "pnpm --filter \"...[origin/main]\" build",
     "build:watch": "father dev",
     "docs:build": "dumi build",
     "test": "jest",
@@ -21,9 +21,10 @@
     "lint:css": "stylelint \"{src,test}/**/*.{css,less}\"",
     "lint:es": "eslint \"{src,test}/**/*.{js,jsx,ts,tsx}\"",
     "prepublishOnly": "father doctor && npm run build",
-    "release": "pnpm login:repository && pnpm changeset && pnpm changeset version && pnpm run build && pnpm run lint && pnpm publish -r",
+    "change:version": "pnpm changeset && pnpm changeset version",
+    "release": "pnpm login:repository && pnpm run lint && pnpm publish -r",
     "login:repository": "sh scripts/pnpm-login.sh",
-    "createTemplate": "node ./scripts/create-template.js"
+    "create": "node ./scripts/create-template.js"
   },
   "authors": [
     "997763513@qq.com"

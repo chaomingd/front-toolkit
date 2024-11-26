@@ -3,19 +3,9 @@
   "version": "0.1.0",
   "keywords": [],
   "license": "MIT",
-  "main": "dist/cjs/index.js",
+  "main": "dist/lib/index.js",
   "module": "dist/esm/index.js",
   "typings": "dist/esm/index.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
-    },
-    "./*": {
-      "import": "./dist/esm/*",
-      "require": "./dist/cjs/*"
-    }
-  },
   "files": [
     "dist"
   ],

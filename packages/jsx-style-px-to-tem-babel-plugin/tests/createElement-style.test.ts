@@ -79,7 +79,6 @@ describe('createElement-style', () => {
       React.createElement('div', {...{ style: props.style }});
     `;
     const output = transform(input);
-    console.log(output)
-    expect(output).toMatch(/covertJsxStyleToRem[\s\S]*props.style/);
+    expect(output).toMatch(/covertJsxPropsToRem[\s\S]*props.style/);
   });
 });

@@ -87,6 +87,6 @@ describe('jsx-style', () => {
       _jsx('div', {...{ style: props.style }});
     `;
     const output = transform(input);
-    expect(output).toMatch(/covertJsxStyleToRem[\s\S]*props.style/);
+    expect(output).toMatch(/covertJsxPropsToRem[\s\S]*props.style/);
   });
 });

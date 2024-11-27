@@ -9,6 +9,7 @@ import {
   isStyleAttibute,
   setOptionsConfig,
 } from './utils';
+export * from './nodeModulesInclude';
 
 let shouldImportHelpFunction = false;
 

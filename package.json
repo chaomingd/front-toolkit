@@ -17,9 +17,6 @@
     "docs:preview": "dumi preview",
     "prepare": "husky install && dumi setup",
     "doctor": "father doctor",
-    "lint": "pnpm run \"/^lint:.+/\"",
-    "lint:css": "stylelint \"{src,test}/**/*.{css,less}\"",
-    "lint:es": "eslint \"{src,test}/**/*.{js,jsx,ts,tsx}\"",
     "prepublishOnly": "father doctor && npm run build",
     "change:version": "pnpm changeset && pnpm changeset version",
     "release": "pnpm login:repository && pnpm run lint && pnpm publish -r",
@@ -39,18 +36,18 @@
     ]
   },
   "lint-staged": {
-    "*.{md,json}": [
+    "packages/**/*.{md,json}": [
       "prettier --write --no-error-on-unmatched-pattern"
     ],
-    "*.{css,less}": [
+    "packages/**/*.{css,less}": [
       "stylelint --fix",
       "prettier --write"
     ],
-    "*.{js,jsx}": [
+    "packages/**/*.{js,jsx}": [
       "eslint --fix",
       "prettier --write"
     ],
-    "*.{ts,tsx}": [
+    "packages/**/*.{ts,tsx}": [
       "eslint --fix",
       "prettier --parser=typescript --write"
     ]

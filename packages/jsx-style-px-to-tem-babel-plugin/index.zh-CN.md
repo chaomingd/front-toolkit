@@ -9,21 +9,74 @@
 ```sh
 npm install --save-dev @front-toolkit/jsx-style-px-to-rem-babel-plugin @babel/core @babel/preset-react
 ```
+
 在 Babel 配置文件中添加插件：
+
 ```json
 {
   "presets": ["@babel/preset-react"],
   "plugins": [
-    ["@front-toolkit/jsx-style-px-to-rem-babel-plugin", {
-      "rootValue": 16,
-      "unitPrecision": 5,
-      "minPixelValue": 2
-    }]
+    [
+      "@front-toolkit/jsx-style-px-to-rem-babel-plugin",
+      {
+        "rootValue": 16,
+        "unitPrecision": 5,
+        "minPixelValue": 2
+      }
+    ]
   ]
 }
 ```
 
+## 注意
+
+如何要转换 node_module 中的第三方 react 组件库，可以使用 nodeModulesInclude (配合 webpack 使用) 辅助函数来包含 react 组件库
+`nodeModulesInclude 的原理是读取第三方的package.json，过滤出packageJson.dependendies 或者 packageJson.peerDependencies 中包含 react 的组件库`
+
+```tsx
+// webpack.config.js
+import { nodeModulesInclude } from '@front-toolkit/jsx-style-px-to-tem-babel-plugin';
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.m?jsx?$/,
+        include: [nodeModulesInclude],
+        loader: '@front-toolkit/jsx-style-px-to-tem-babel-plugin',
+        options: {
+          rootValue: 16,
+          unitPrecision: 5,
+          minPixelValue: 2,
+        },
+      },
+    ],
+  },
+};
+
+// 对于 webpack chain api
+config.module
+  .rule('jsx-style-px-to-tem')
+  .test(/\.m?jsx?$/)
+  .include.add(nodeModulesInclude)
+  .end()
+  .use('babel-loader')
+  .loader('babel-loader')
+  .options({
+    plugins: [
+      [
+        '@front-toolkit/jsx-style-px-to-tem-babel-plugin',
+        {
+          rootValue: 16,
+          unitPrecision: 3,
+          minPixelValue: 1,
+        },
+      ],
+    ],
+  });
+```
+
 ## 配置选项
+
 - `rootValue`: The root element font size, default is `16`.
 - `unitPrecision`: The decimal precision for the converted `rem` units, default is `5`.
 - `minPixelValue`: The minimum pixel value to convert, default is `1`.

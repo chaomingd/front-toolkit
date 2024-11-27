@@ -25,6 +25,30 @@ Add the plugin to your Babel configuration file:
 }
 ```
 
+## Note
+To convert third-party React component libraries in `node_modules`, you can use the `nodeModulesInclude` helper function (used with webpack) to include React component libraries. `The `nodeModulesInclude` function works by reading the third-party `package.json` and filtering out libraries that have `react` in their `dependencies` or `peerDependencies`.`
+
+```tsx
+// webpack.config.js
+import { nodeModulesInclude } from '@front-toolkit/jsx-style-px-to-rem-babel-plugin';
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.m?jsx?$/,
+        include: [nodeModulesInclude],
+        loader: '@front-toolkit/jsx-style-px-to-rem-babel-plugin',
+        options: {
+          rootValue: 16,
+          unitPrecision: 5,
+          minPixelValue: 2,
+        },
+      },
+    ],
+  },
+};
+```
+
 ## Configuration Options
 
 - `rootValue`: The root element font size, default is `16`.

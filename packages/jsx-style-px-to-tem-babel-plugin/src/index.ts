@@ -6,7 +6,7 @@ import {
   inlineCssPxToRemOptions,
   isIgnoreUnitProperty,
   isNeedTranform,
-  isStyleAttibute,
+  isStyleAttribute,
   setOptionsConfig,
 } from './utils';
 export * from './nodeModulesInclude';
@@ -123,7 +123,7 @@ export default function (_: any, options: inlineCssPxToRemOptions) {
               enter(path: NodePath<babelTypes.JSXAttribute>) {
                 const atributName = path.node.name.name as string;
                 const tagName = (path.parentPath.node as any).name.name;
-                if (!isNeedTranform(tagName) || !isStyleAttibute(atributName)) {
+                if (!isNeedTranform(tagName) || !isStyleAttribute(atributName)) {
                   return;
                 }
                 const expression = path.get('value').get('expression');

@@ -316,7 +316,7 @@ export function covertStringPropertyToRem(value: string): string {
   });
 }
 
-export function isStyleAttibute(name: string) {
+export function isStyleAttribute(name: string) {
   return name === "style";
 }
 

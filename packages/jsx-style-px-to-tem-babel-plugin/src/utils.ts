@@ -311,9 +311,9 @@ export function pxtorem(value: number): string {
 export const PX_VALUE_REG = /(\d*(\.\d+)?)px/g;
 
 export function covertStringPropertyToRem(value: string): string {
-  return value.replace(PX_VALUE_REG, (_, p1) => {
+  return value?.replace(PX_VALUE_REG, (_, p1) => {
     return pxtorem(parseFloat(p1));
-  });
+  }) || '';
 }
 
 export function isStyleAttribute(name: string) {
@@ -346,20 +346,18 @@ export function covertJsxStyleToRem(
   style: Record<string, any>
 ): Record<string, string> {
   if (!style) return style;
-  const newStyle: Record<string, any> = {};
+  // const newStyle: Record<string, any> = {};
   Object.keys(style).forEach((key) => {
     if (isIgnoreUnitProperty(key)) {
-      newStyle[key] = style[key];
       return;
     }
     const value = style[key];
     if (!value) {
-      newStyle[key] = value;
       return;
     }
-    newStyle[key] = covertStylePropertyToRem(value, key);
+    style[key] = covertStylePropertyToRem(value, key);
   });
-  return newStyle;
+  return style;
 }
 
 export function covertJsxPropsToRem(props: Record<string, any>) {

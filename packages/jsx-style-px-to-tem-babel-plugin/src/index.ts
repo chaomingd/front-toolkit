@@ -88,7 +88,14 @@ function wrapperCallExpressionToRem(
   shouldImportHelpFunction = true;
 }
 
-const JSX_CALL_EXPRESSIONS = ['_jsx', '_jsxs', 'jsx', 'jsxs', '_jsxDEV', 'jsxDEV'];
+const JSX_CALL_EXPRESSIONS = [
+  '_jsx',
+  '_jsxs',
+  'jsx',
+  'jsxs',
+  '_jsxDEV',
+  'jsxDEV',
+];
 
 export default function (_: any, options: inlineCssPxToRemOptions) {
   if (options) {
@@ -158,21 +165,27 @@ export default function (_: any, options: inlineCssPxToRemOptions) {
                   const calleeName = (callee.get('property.name') as any)?.node;
                   if (!calleeName) return;
                   if (calleeName === 'createElement') {
-                    if ((callee.get('object.name') as any).node !== 'React')
+                    if ((callee.get('object.name') as any).node !== 'React') {
                       return;
+                    }
                   } else {
                     if (
                       !JSX_CALL_EXPRESSIONS.some((name) => calleeName === name)
-                    )
+                    ) {
                       return;
+                    }
                   }
                 } else {
                   const calleeName = (callee.get('name') as any).node;
                   if (!calleeName) return;
-                  if (!JSX_CALL_EXPRESSIONS.some((name) => calleeName === name))
+                  if (
+                    !JSX_CALL_EXPRESSIONS.some((name) => calleeName === name)
+                  ) {
                     return;
+                  }
                 }
                 const tagNamePath = path.get('arguments').at(0) as NodePath;
+                if (!tagNamePath.isStringLiteral()) return;
                 const propsPath = path.get('arguments').at(1) as NodePath;
                 const tagName =
                   (tagNamePath.node as any)?.value ||
@@ -182,20 +195,21 @@ export default function (_: any, options: inlineCssPxToRemOptions) {
                   return;
                 }
                 if (propsPath.isObjectExpression()) {
-                  propsPath.traverse({
-                    ObjectProperty: {
-                      exit(path: NodePath<babelTypes.ObjectProperty>) {
-                        if (isStyleAttibute((path.node.key as any).name)) {
-                          // 添加一个标志来跟踪是否已经处理过该节点
-                          if ((path.node as any).__processed_jsx_px_to_rem) {
-                            return;
-                          }
-                          (path.node as any).__processed_jsx_px_to_rem = true;
-                          covertObjectExpressionToRem(path.get('value'));
-                        }
-                      },
-                    },
+                  const properties = propsPath.get('properties');
+                  if (!properties || !properties.length) return;
+                  const stylePath = properties.find((prop) => {
+                    return (prop.node as any)?.key?.name === 'style';
                   });
+                  if (stylePath && stylePath.node) {
+                    // 添加一个标志来跟踪是否已经处理过该节点
+                    if ((stylePath.node as any).__processed_jsx_px_to_rem) {
+                      return;
+                    }
+                    (stylePath.node as any).__processed_jsx_px_to_rem = true;
+                    covertObjectExpressionToRem(
+                      stylePath.get('value') as NodePath,
+                    );
+                  }
                 } else {
                   if (
                     propsPath.isNullLiteral() ||
@@ -207,27 +221,24 @@ export default function (_: any, options: inlineCssPxToRemOptions) {
                     propsPath as NodePath<babelTypes.Expression>,
                   );
                 }
-              }
+              },
             },
           });
           if (shouldImportHelpFunction) {
-            // 使用 template API 创建要插入的代码节点
             const buildFunction = template(
               `import { PX_TO_REM as ${PX_TO_REM_ALIAS}, COVERT_JSX_STYLE_TO_REM as ${COVERT_JSX_STYLE_TO_REM_ALIAS}, COVERT_JSX_PROPS_TO_REM as ${COVERT_JSX_PROPS_TO_REM_ALIAS} } from 'SOURCE';\n`,
             );
-  
-            // 生成 AST 节点
+
             const importDeclaration = buildFunction({
               PX_TO_REM,
               COVERT_JSX_STYLE_TO_REM,
               COVERT_JSX_PROPS_TO_REM,
               SOURCE: LIB_NAME,
             });
-  
-            // 在文件的开头插入代码
+
             path.unshiftContainer('body', importDeclaration);
           }
-        }
+        },
       },
     },
   };

@@ -46,7 +46,9 @@ describe('jsx-style', () => {
     `;
     const output = transform(input);
     expect(output).toMatch(/margin:[\s\S]*rem/);
-    expect(output).toMatch(/covertStylePropertyToRem[\s\S]*dynamicPadding, "padding"/);
+    expect(output).toMatch(
+      /covertStylePropertyToRem[\s\S]*dynamicPadding, "padding"/,
+    );
   });
 
   it('should ignore non-px dynamic values', () => {
@@ -56,7 +58,9 @@ describe('jsx-style', () => {
       _jsx('div', { style: { color: dynamicColor } });
     `;
     const output = transform(input);
-    expect(output).toMatch(/covertStylePropertyToRem[\s\S]*dynamicColor, "color"/);
+    expect(output).toMatch(
+      /covertStylePropertyToRem[\s\S]*dynamicColor, "color"/,
+    );
   });
 
   it('should handle complex expressions in dynamic style', () => {
@@ -87,6 +91,6 @@ describe('jsx-style', () => {
       _jsx('div', {...{ style: props.style }});
     `;
     const output = transform(input);
-    expect(output).toMatch(/covertJsxPropsToRem[\s\S]*props.style/);
+    expect(output).toMatch(/covertJsxStyleToRem[\s\S]*props.style/);
   });
 });

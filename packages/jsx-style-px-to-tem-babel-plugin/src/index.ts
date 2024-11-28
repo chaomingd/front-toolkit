@@ -116,19 +116,21 @@ export default function (_: any, options: inlineCssPxToRemOptions) {
   return {
     visitor: {
       Program: {
-        exit(path: NodePath<babelTypes.Program>) {
+        enter(path: NodePath<babelTypes.Program>) {
           shouldImportHelpFunction = false;
           path.traverse({
             JSXAttribute: {
               enter(path: NodePath<babelTypes.JSXAttribute>) {
                 const atributName = path.node.name.name as string;
                 const tagName = (path.parentPath.node as any).name.name;
-                if (!isNeedTranform(tagName) || !isStyleAttribute(atributName)) {
+                if (
+                  !isNeedTranform(tagName) ||
+                  !isStyleAttribute(atributName)
+                ) {
                   return;
                 }
                 const expression = path.get('value').get('expression');
                 if (expression) {
-                  // 添加一个标志来跟踪是否已经处理过该节点
                   if ((path.node as any).__processed_jsx_px_to_rem) {
                     return;
                   }
@@ -145,7 +147,6 @@ export default function (_: any, options: inlineCssPxToRemOptions) {
                 if (!isNeedTranform(tagName)) {
                   return;
                 }
-                // 添加一个标志来跟踪是否已经处理过该节点
                 if ((path.node as any).__processed_jsx_px_to_rem) {
                   return;
                 }
@@ -154,8 +155,7 @@ export default function (_: any, options: inlineCssPxToRemOptions) {
               },
             },
             CallExpression: {
-              enter(path: NodePath<babelTypes.CallExpression>) {
-                // 添加一个标志来跟踪是否已经处理过该节点
+              exit(path: NodePath<babelTypes.CallExpression>) {
                 if ((path.node as any).__processed_jsx_px_to_rem) {
                   return;
                 }
@@ -194,33 +194,29 @@ export default function (_: any, options: inlineCssPxToRemOptions) {
                 if (!propsPath || !propsPath.node) {
                   return;
                 }
+                let isTransformed = false;
                 if (propsPath.isObjectExpression()) {
-                  const properties = propsPath.get('properties');
-                  if (!properties || !properties.length) return;
-                  const stylePath = properties.find((prop) => {
-                    return (prop.node as any)?.key?.name === 'style';
+                  propsPath.traverse({
+                    ObjectProperty(path: NodePath<babelTypes.ObjectProperty>) {
+                      if (!path.node.key) return;
+                      const keyName = (path.node.key as any).name;
+                      if (isStyleAttribute(keyName)) {
+                        covertObjectExpressionToRem(path.get('value'));
+                        isTransformed = true;
+                      }
+                    },
                   });
-                  if (stylePath && stylePath.node) {
-                    // 添加一个标志来跟踪是否已经处理过该节点
-                    if ((stylePath.node as any).__processed_jsx_px_to_rem) {
-                      return;
-                    }
-                    (stylePath.node as any).__processed_jsx_px_to_rem = true;
-                    covertObjectExpressionToRem(
-                      stylePath.get('value') as NodePath,
-                    );
-                  }
-                } else {
-                  if (
-                    propsPath.isNullLiteral() ||
-                    propsPath.isTSUndefinedKeyword()
-                  ) {
-                    return;
-                  }
-                  wrapperCallPropsToRem(
-                    propsPath as NodePath<babelTypes.Expression>,
-                  );
                 }
+                if (isTransformed) return;
+                if (
+                  propsPath.isNullLiteral() ||
+                  propsPath.isTSUndefinedKeyword()
+                ) {
+                  return;
+                }
+                wrapperCallPropsToRem(
+                  propsPath as NodePath<babelTypes.Expression>,
+                );
               },
             },
           });

@@ -18,7 +18,7 @@
     "prepare": "husky install && dumi setup",
     "doctor": "father doctor",
     "change:version": "pnpm changeset && pnpm changeset version && pnpm build",
-    "release": "pnpm login:repository && changeset publish --registry https://registry.npmjs.org/ && git push origin --tags",
+    "release": "pnpm login:repository && changeset publish && git push origin --tags",
     "login:repository": "sh scripts/pnpm-login.sh",
     "create": "node ./scripts/create-template.js"
   },

@@ -3,6 +3,7 @@
   "version": "0.2.3",
   "keywords": [],
   "license": "MIT",
+  "homepage": "https://github.com/chaomingd/front-toolkit/blob/main/packages/babel-plugin-jsx-style-px-to-tem/README.md",
   "main": "dist/lib/index.js",
   "module": "dist/esm/index.js",
   "typings": "dist/esm/index.d.ts",

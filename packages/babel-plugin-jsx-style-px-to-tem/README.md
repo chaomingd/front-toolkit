@@ -1,6 +1,6 @@
 # babel-plugin-jsx-style-px-to-rem Babel Plugin
 
-[中文文档](./README.zh-CN.md)
+[中文文档](https://github.com/chaomingd/front-toolkit/blob/main/packages/babel-plugin-jsx-style-px-to-tem/README.zh-CN.md)
 
 `jsx-style-px-to-rem` is a Babel plugin that converts `px` units to `rem` units in JSX and `React.createElement`.
 
@@ -28,7 +28,7 @@ Add the plugin to your Babel configuration file:
 ```
 
 ## Note
-To convert third-party React component libraries in `node_modules`, you can use the `nodeModulesInclude` helper function (used with webpack) to include React component libraries. `The `nodeModulesInclude` function works by reading the third-party `package.json` and filtering out libraries that have `react` in their `dependencies` or `peerDependencies`.`
+To convert third-party React component libraries in `node_modules`, you can use the `nodeModulesInclude` helper function (used with webpack) to include React component libraries. `The `nodeModulesInclude` function works by reading the third-party `package.json` and filtering in libraries that have `react` in their `dependencies` or `peerDependencies`.`
 
 ```tsx
 // webpack.config.js

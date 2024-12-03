@@ -35,14 +35,14 @@ npm install --save-dev @front-toolkit/jsx-style-px-to-rem-babel-plugin @babel/co
 
 ```tsx
 // webpack.config.js
-import { nodeModulesInclude } from '@front-toolkit/jsx-style-px-to-tem-babel-plugin';
+import { nodeModulesInclude } from 'babel-plugin-style-px-to-tem';
 module.exports = {
   module: {
     rules: [
       {
         test: /\.m?jsx?$/,
         include: [nodeModulesInclude],
-        loader: '@front-toolkit/jsx-style-px-to-tem-babel-plugin',
+        loader: 'babel-plugin-style-px-to-tem',
         options: {
           rootValue: 16,
           unitPrecision: 5,
@@ -64,7 +64,7 @@ config.module
   .options({
     plugins: [
       [
-        '@front-toolkit/jsx-style-px-to-tem-babel-plugin',
+        'babel-plugin-style-px-to-tem',
         {
           rootValue: 16,
           unitPrecision: 3,

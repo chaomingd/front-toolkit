@@ -7,7 +7,7 @@
 First, install the plugin and its dependencies:
 
 ```sh
-npm install --save-dev @front-toolkit/jsx-style-px-to-rem-babel-plugin @babel/core @babel/preset-react
+npm install --save-dev babel-plugin-jsx-style-px-to-rem @babel/core @babel/preset-react
 ```
 
 Add the plugin to your Babel configuration file:
@@ -16,7 +16,7 @@ Add the plugin to your Babel configuration file:
 {
   "presets": ["@babel/preset-react"],
   "plugins": [
-    ["@front-toolkit/jsx-style-px-to-rem-babel-plugin", {
+    ["babel-plugin-jsx-style-px-to-rem", {
       "rootValue": 16,
       "unitPrecision": 5,
       "minPixelValue": 2
@@ -30,14 +30,14 @@ To convert third-party React component libraries in `node_modules`, you can use 
 
 ```tsx
 // webpack.config.js
-import { nodeModulesInclude } from '@front-toolkit/jsx-style-px-to-rem-babel-plugin';
+import { nodeModulesInclude } from 'babel-plugin-jsx-style-px-to-rem';
 module.exports = {
   module: {
     rules: [
       {
         test: /\.m?jsx?$/,
         include: [nodeModulesInclude],
-        loader: '@front-toolkit/jsx-style-px-to-rem-babel-plugin',
+        loader: 'babel-plugin-jsx-style-px-to-rem',
         options: {
           rootValue: 16,
           unitPrecision: 5,
@@ -59,7 +59,7 @@ config.module
   .options({
     plugins: [
       [
-        '@front-toolkit/jsx-style-px-to-tem-babel-plugin',
+        'babel-plugin-style-px-to-tem',
         {
           rootValue: 16,
           unitPrecision: 3,

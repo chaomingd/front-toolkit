@@ -1,4 +1,4 @@
-# @front-toolkit/jsx-style-px-to-tem-babel-plugin
+# babel-plugin-style-px-to-tem
 
 ## 0.2.1
 

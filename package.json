@@ -17,7 +17,6 @@
     "docs:preview": "dumi preview",
     "prepare": "husky install && dumi setup",
     "doctor": "father doctor",
-    "prepublishOnly": "father doctor && npm run build",
     "change:version": "pnpm changeset && pnpm changeset version && pnpm build",
     "release": "pnpm login:repository && changeset publish && git push origin --tags",
     "login:repository": "sh scripts/pnpm-login.sh",

@@ -1,5 +1,5 @@
 {
-  "name": "@front-toolkit/babel-plugin-jsx-style-px-to-tem",
+  "name": "babel-plugin-jsx-style-px-to-tem",
   "version": "0.2.1",
   "keywords": [],
   "license": "MIT",

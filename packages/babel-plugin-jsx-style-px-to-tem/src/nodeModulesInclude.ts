@@ -15,7 +15,6 @@ export function nodeModulesInclude(filename: string) {
   if (nodeModulesPackageName[0] === '@') {
     nodeModulesPackageName += path.sep + nodeModulesPackagePathArr[1];
   }
-  
   let shouldCompile = packageCache.get(nodeModulesPackageName);
   if (shouldCompile !== undefined) {
     return shouldCompile;

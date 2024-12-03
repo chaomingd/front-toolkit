@@ -18,8 +18,8 @@
     "prepare": "husky install && dumi setup",
     "doctor": "father doctor",
     "prepublishOnly": "father doctor && npm run build",
-    "change:version": "pnpm changeset && pnpm changeset version",
-    "release": "pnpm login:repository && pnpm run lint && pnpm publish -r",
+    "change:version": "pnpm changeset && pnpm changeset version && pnpm build",
+    "release": "pnpm login:repository && changeset publish && git push origin --tags",
     "login:repository": "sh scripts/pnpm-login.sh",
     "create": "node ./scripts/create-template.js"
   },
@@ -53,7 +53,8 @@
     ]
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "peerDependencies": {
     "react": ">=16.9.0",

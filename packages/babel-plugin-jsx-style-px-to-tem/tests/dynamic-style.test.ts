@@ -40,16 +40,15 @@ describe('dynamic-style', () => {
       var a = <div {...{style: style}} />;
     `;
     const output = transform(input);
-    expect(output).toMatch(/covertJsxPropsToRem[\s\S]*style/);
+    expect(output).toMatch(/covertJsxStyleToRem[\s\S]*style/);
   });
 
-  it('should wrapper covertJsxPropsToRem', () => {
+  it('should wrapper covertJsxStyleToRem', () => {
     const input = `
       var style = {width: 100};
-      var a = <div {...style} />;
+      var a = <div {...{style}} />;
     `;
     const output = transform(input);
-    // console.log(output);
-    expect(output).toMatch(/covertJsxPropsToRem[\s\S]*style/);
+    expect(output).toMatch(/covertJsxStyleToRem[\s\S]*style/);
   });
 });

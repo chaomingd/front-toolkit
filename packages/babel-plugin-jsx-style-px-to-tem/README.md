@@ -47,6 +47,27 @@ module.exports = {
     ],
   },
 };
+
+// 对于 webpack chain api
+config.module
+  .rule('jsx-style-px-to-tem')
+  .test(/\.m?jsx?$/)
+  .include.add(nodeModulesInclude)
+  .end()
+  .use('babel-loader')
+  .loader('babel-loader')
+  .options({
+    plugins: [
+      [
+        '@front-toolkit/jsx-style-px-to-tem-babel-plugin',
+        {
+          rootValue: 16,
+          unitPrecision: 3,
+          minPixelValue: 1,
+        },
+      ],
+    ],
+  });
 ```
 
 ## Configuration Options

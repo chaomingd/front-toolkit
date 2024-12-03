@@ -9,6 +9,7 @@ const transform = (code: string, options?: inlineCssPxToRemOptions) => {
       '@babel/preset-react',
       {
         runtime: 'automatic',
+        development: true,
       }
     ]],
   })?.code;

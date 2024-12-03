@@ -6,19 +6,19 @@ export default defineConfig({
   alias,
   resolve: {
     atomDirs: [
-      { type: 'jsx-style-px-to-rem-babel-plugin', dir: 'packages/jsx-style-px-to-rem-babel-plugin' }
+      { type: 'plugin', dir: 'packages/babel-plugin-jsx-style-px-to-rem' }
     ],
   },
   themeConfig: {
     name: 'front-toolkit',
     nav: {
       'en-US': [
-        { title: 'JSXStyleToRem', link: '/jsx-style-px-to-tem-babel-plugin/index' },
+        { title: 'JSXStyleToRem', link: '/plugins/README' },
       ],
       'zh-CN': [
         {
           title: 'JSXStyleToRem',
-          link: '/jsx-style-px-to-tem-babel-plugin-cn/index',
+          link: '/plugins/README-cn',
         }
       ],
     }

@@ -343,9 +343,11 @@ export function covertStylePropertyToRem(
 }
 
 export function covertJsxStyleToRem(
-  style: Record<string, any>
+  style: Record<string, any>,
+  tag?: any
 ): Record<string, string> {
   if (!style) return style;
+  if (tag && (typeof tag !== 'string' || !isNeedTranform(tag))) return style;
   // const newStyle: Record<string, any> = {};
   Object.keys(style).forEach((key) => {
     if (isIgnoreUnitProperty(key)) {
@@ -360,9 +362,9 @@ export function covertJsxStyleToRem(
   return style;
 }
 
-export function covertJsxPropsToRem(props: Record<string, any>) {
-  if (!props) return props;
-  if (!("style" in props)) return props;
+export function covertJsxPropsToRem(props: Record<string, any>, tag?: any) {
+  if (!props || !("style" in props)) return props;
+  if (tag && (typeof tag !== 'string' || !isNeedTranform(tag))) return props;
   props.style = covertJsxStyleToRem(props.style);
   return props;
 }

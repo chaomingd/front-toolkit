@@ -1,10 +1,9 @@
 import transform from './transform';
 
-describe('jsx-style', () => {
+describe('createElement-style', () => {
   it('should convert px to rem in style attribute', () => {
     const input = `
-      import { jsx as _jsx } from 'react/jsx-runtime';
-      _jsx('div', { style: { width: '16px', height: '32px' } });
+      React.createElement('div', { style: { width: '16px', height: '32px' } });
     `;
     const output = transform(input);
     expect(output).toMatch(/width:[\s\S]*rem/);
@@ -13,8 +12,7 @@ describe('jsx-style', () => {
 
   it('should ignore custom components', () => {
     const input = `
-      import { jsx as _jsx } from 'react/jsx-runtime';
-      _jsx(CustomComponent, { style: { width: '16px' } });
+      React.createElement(CustomComponent, { style: { width: '16px' } });
     `;
     const output = transform(input);
     expect(output).toContain(`width: '16px'`);
@@ -22,8 +20,7 @@ describe('jsx-style', () => {
 
   it('should handle numeric values', () => {
     const input = `
-      import { jsx as _jsx } from 'react/jsx-runtime';
-      _jsx('div', { style: { margin: 16 } });
+      React.createElement('div', { style: { margin: 16 } });
     `;
     const output = transform(input);
     expect(output).toMatch(/margin:[\s\S]*rem/);
@@ -31,8 +28,7 @@ describe('jsx-style', () => {
 
   it('should handle line-height', () => {
     const input = `
-      import { jsx as _jsx } from 'react/jsx-runtime';
-      _jsx('div', { style: { lineHeight: '16px' } });
+      React.createElement('div', { style: { lineHeight: '16px' } });
     `;
     const output = transform(input);
     expect(output).toMatch(/lineHeight:[\s\S]*rem/);
@@ -40,9 +36,8 @@ describe('jsx-style', () => {
 
   it('should handle mixed static and dynamic styles', () => {
     const input = `
-      import { jsx as _jsx } from 'react/jsx-runtime';
       const dynamicPadding = '20px';
-      _jsx('div', { style: { margin: '10px', padding: dynamicPadding } });
+      React.createElement('div', { style: { margin: '10px', padding: dynamicPadding } });
     `;
     const output = transform(input);
     expect(output).toMatch(/margin:[\s\S]*rem/);
@@ -53,9 +48,8 @@ describe('jsx-style', () => {
 
   it('should ignore non-px dynamic values', () => {
     const input = `
-      import { jsx as _jsx } from 'react/jsx-runtime';
       const dynamicColor = 'red';
-      _jsx('div', { style: { color: dynamicColor } });
+      React.createElement('div', { style: { color: dynamicColor } });
     `;
     const output = transform(input);
     expect(output).toMatch(
@@ -65,10 +59,10 @@ describe('jsx-style', () => {
 
   it('should handle complex expressions in dynamic style', () => {
     const input = `
-      import { jsx as _jsx } from 'react/jsx-runtime';
       const baseSize = 8;
-      _jsx('div', { style: { width: \`\${baseSize * 2}px\`, height: \`\${baseSize * 4}px\` } });
+      React.createElement('div', { style: { width: \`\${baseSize * 2}px\`, height: \`\${baseSize * 4}px\` } });
     `;
+
     const output = transform(input);
     expect(output).toMatch(/covertStylePropertyToRem[\s\S]*"width"/);
     expect(output).toMatch(/covertStylePropertyToRem[\s\S]*"height"/);
@@ -76,9 +70,8 @@ describe('jsx-style', () => {
 
   it('should handle complex props', () => {
     const input = `
-      import { jsx as _jsx } from 'react/jsx-runtime';
       const props = { style: { lineHeight: 1.3 } }
-      _jsx('div', props);
+      React.createElement('div', props);
     `;
     const output = transform(input);
     expect(output).toMatch(/covertJsxPropsToRem[\s\S]*props/);
@@ -86,11 +79,20 @@ describe('jsx-style', () => {
 
   it('should handle complex props 2', () => {
     const input = `
-      import { jsx as _jsx } from 'react/jsx-runtime';
       const props = { style: { lineHeight: 1.3 } }
-      _jsx('div', {...{ style: props.style }});
+      React.createElement('div', {...{ style: props.style }});
     `;
     const output = transform(input);
-    expect(output).toMatch(/covertJsxStyleToRem[\s\S]*props.style/);
+    expect(output).toMatch(/covertJsxPropsToRem[\s\S]*props.style/);
+  });
+
+  it('should covertJsxPropsToRem', () => {
+    const input = `
+      const Component = 'div';
+      const props = { style: { lineHeight: 1.3 } }
+      React.createElement(Component, {...{ style: props.style }});
+    `;
+    const output = transform(input);
+    expect(output).toMatch(/covertJsxPropsToRem[\s\S]*props.style[\s\S]*Component/);
   });
 });

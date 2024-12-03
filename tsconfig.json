@@ -21,8 +21,8 @@
       "@@/*": [
         ".dumi/tmp/*"
       ],
-      "@front-toolkit/jsx-style-px-to-tem-babel-plugin": [
-        "./packages/jsx-style-px-to-tem-babel-plugin/src/"
+      "@front-toolkit/babel-plugin-jsx-style-px-to-tem": [
+        "./packages/babel-plugin-jsx-style-px-to-tem/src/"
       ]
     }
   },

@@ -1,4 +1,6 @@
-# jsx-style-px-to-rem Babel Plugin
+# babel-plugin-jsx-style-px-to-rem Babel Plugin
+
+[中文文档](./README.zh-CN.md)
 
 `jsx-style-px-to-rem` is a Babel plugin that converts `px` units to `rem` units in JSX and `React.createElement`.
 
@@ -48,7 +50,7 @@ module.exports = {
   },
 };
 
-// 对于 webpack chain api
+// for webpack chain api
 config.module
   .rule('jsx-style-px-to-tem')
   .test(/\.m?jsx?$/)

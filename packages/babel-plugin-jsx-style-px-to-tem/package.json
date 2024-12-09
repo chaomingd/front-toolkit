@@ -1,5 +1,5 @@
 {
-  "name": "babel-plugin-jsx-style-px-to-tem",
+  "name": "babel-plugin-jsx-style-px-to-rem",
   "version": "0.2.5",
   "keywords": [
     "px to rem",
@@ -10,7 +10,8 @@
     "inline style px to rem",
     "inline-style-px-to-rem",
     "jsx style",
-    "babel plugin"
+    "babel plugin",
+    "babel-plugin-jsx-style-px-to-rem"
   ],
   "homepage": "https://github.com/chaomingd/front-toolkit/blob/main/packages/babel-plugin-jsx-style-px-to-tem/README.md",
   "license": "MIT",

@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-jsx-style-px-to-rem",
-  "version": "0.2.6",
+  "version": "0.2.8",
   "keywords": [
     "px to rem",
     "rem",
@@ -13,7 +13,7 @@
     "babel plugin",
     "babel-plugin-jsx-style-px-to-rem"
   ],
-  "homepage": "https://github.com/chaomingd/front-toolkit/blob/main/packages/babel-plugin-jsx-style-px-to-tem/README.md",
+  "homepage": "https://github.com/chaomingd/front-toolkit/blob/main/packages/babel-plugin-jsx-style-px-to-rem/README.md",
   "license": "MIT",
   "main": "dist/lib/index.js",
   "typings": "dist/lib/index.d.ts",

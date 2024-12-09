@@ -1,5 +1,11 @@
 # babel-plugin-style-px-to-tem
 
+## 0.2.5
+
+### Patch Changes
+
+- 修复 cloneElement 不转换的问题，增加 shouldTransform 函数控制是否转换,将转换过程全部改成运行时转换
+
 ## 0.2.4
 
 ### Patch Changes

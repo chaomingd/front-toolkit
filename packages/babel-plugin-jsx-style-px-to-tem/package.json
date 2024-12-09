@@ -1,12 +1,21 @@
 {
   "name": "babel-plugin-jsx-style-px-to-tem",
-  "version": "0.2.4",
-  "keywords": [],
-  "license": "MIT",
+  "version": "0.2.5",
+  "keywords": [
+    "px to rem",
+    "rem",
+    "px",
+    "jsx style px to rem",
+    "jsx-style-px-to-rem",
+    "inline style px to rem",
+    "inline-style-px-to-rem",
+    "jsx style",
+    "babel plugin"
+  ],
   "homepage": "https://github.com/chaomingd/front-toolkit/blob/main/packages/babel-plugin-jsx-style-px-to-tem/README.md",
+  "license": "MIT",
   "main": "dist/lib/index.js",
-  "module": "dist/esm/index.js",
-  "typings": "dist/esm/index.d.ts",
+  "typings": "dist/lib/index.d.ts",
   "files": [
     "dist"
   ],
@@ -15,10 +24,6 @@
     "build:deps": "father prebundle",
     "dev": "father dev",
     "prepublishOnly": "father doctor && npm run build"
-  },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
   },
   "devDependencies": {
     "@babel/cli": "^7.25.7",
@@ -34,6 +39,10 @@
   },
   "peerDependencies": {
     "@babel/core": "^7.0.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "authors": []
 }

@@ -1,4 +1,4 @@
-import { CONFIG_OPTIONS } from "./config";
+export * from './createShouldTransformFunctionWithIgnoreClassNames';
 export interface IncludeItem {
   componentName: string;
   libName?: string;
@@ -8,6 +8,11 @@ export interface inlineCssPxToRemOptions {
   rootValue?: number;
   unitPrecision?: number;
   minPixelValue?: number;
+  shouldTransform?: (
+    tagName: string,
+    props: Record<string, any> | undefined | null,
+    originalProps: Record<string, any> | undefined | null,
+  ) => boolean;
 }
 
 export let optionsConfig: inlineCssPxToRemOptions = {
@@ -16,8 +21,10 @@ export let optionsConfig: inlineCssPxToRemOptions = {
   minPixelValue: 1,
 };
 
-if (CONFIG_OPTIONS) {
-  Object.assign(optionsConfig, CONFIG_OPTIONS);
+declare global {
+  interface Window {
+    __babel_plugin_jsx_style_px_to_rem_options__: inlineCssPxToRemOptions;
+  }
 }
 
 const SVG_TAGS = [
@@ -27,6 +34,7 @@ const SVG_TAGS = [
   "animateTransform",
   "circle",
   "clipPath",
+  "cursor",
   "defs",
   "desc",
   "ellipse",
@@ -56,14 +64,24 @@ const SVG_TAGS = [
   "feTile",
   "feTurbulence",
   "filter",
+  "font",
+  "font-face",
+  "font-face-format",
+  "font-face-name",
+  "font-face-src",
+  "font-face-uri",
   "foreignObject",
   "g",
+  "glyph",
+  "glyphRef",
+  "hkern",
   "image",
   "line",
   "linearGradient",
   "marker",
   "mask",
   "metadata",
+  "missing-glyph",
   "mpath",
   "path",
   "pattern",
@@ -81,156 +99,11 @@ const SVG_TAGS = [
   "text",
   "textPath",
   "title",
+  "tref",
   "tspan",
   "use",
   "view",
-  "g",
-  "animate",
-  "animateMotion",
-  "animateTransform",
-  "mpath",
-  "set",
-  "circle",
-  "ellipse",
-  "line",
-  "polygon",
-  "polyline",
-  "rect",
-  "a",
-  "defs",
-  "g",
-  "marker",
-  "mask",
-  "missing-glyph",
-  "pattern",
-  "svg",
-  "switch",
-  "symbol",
-  "desc",
-  "metadata",
-  "title",
-  "feBlend",
-  "feColorMatrix",
-  "feComponentTransfer",
-  "feComposite",
-  "feConvolveMatrix",
-  "feDiffuseLighting",
-  "feDisplacementMap",
-  "feDropShadow",
-  "feFlood",
-  "feFuncA",
-  "feFuncB",
-  "feFuncG",
-  "feFuncR",
-  "feGaussianBlur",
-  "feImage",
-  "feMerge",
-  "feMergeNode",
-  "feMorphology",
-  "feOffset",
-  "feSpecularLighting",
-  "feTile",
-  "feTurbulence",
-  "font",
-  "font-face",
-  "font-face-format",
-  "font-face-name",
-  "font-face-src",
-  "font-face-uri",
-  "hkern",
-  "vkern",
-  "linearGradient",
-  "radialGradient",
-  "stop",
-  "circle",
-  "ellipse",
-  "image",
-  "line",
-  "path",
-  "polygon",
-  "polyline",
-  "rect",
-  "text",
-  "use",
-  "use",
-  "feDistantLight",
-  "fePointLight",
-  "feSpotLight",
-  "clipPath",
-  "defs",
-  "linearGradient",
-  "marker",
-  "mask",
-  "metadata",
-  "pattern",
-  "radialGradient",
-  "script",
-  "style",
-  "symbol",
-  "title",
-  "linearGradient",
-  "pattern",
-  "radialGradient",
-  "a",
-  "circle",
-  "ellipse",
-  "foreignObject",
-  "g",
-  "image",
-  "line",
-  "path",
-  "polygon",
-  "polyline",
-  "rect",
-  "svg",
-  "switch",
-  "symbol",
-  "text",
-  "textPath",
-  "tspan",
-  "use",
-  "g",
-  "circle",
-  "ellipse",
-  "line",
-  "path",
-  "polygon",
-  "polyline",
-  "rect",
-  "defs",
-  "g",
-  "svg",
-  "symbol",
-  "use",
-  "glyph",
-  "glyphRef",
-  "textPath",
-  "text",
-  "tref",
-  "tspan",
-  "textPath",
-  "tref",
-  "tspan",
-  "clipPath",
-  "cursor",
-  "filter",
-  "foreignObject",
-  "script",
-  "style",
-  "view",
-  "cursor",
-  "font",
-  "font-face",
-  "font-face-format",
-  "font-face-name",
-  "font-face-src",
-  "font-face-uri",
-  "glyph",
-  "glyphRef",
-  "hkern",
-  "missing-glyph",
-  "tref",
-  "vkern",
+  "vkern"
 ];
 
 const SVG_TAGS_MAP = SVG_TAGS.reduce((acc, tag) => {
@@ -238,8 +111,8 @@ const SVG_TAGS_MAP = SVG_TAGS.reduce((acc, tag) => {
   return acc;
 }, {} as Record<string, boolean>);
 
-export function isSvgTag(name: string) {
-  return SVG_TAGS_MAP[name] || false;
+export function isSvgChildTag(name: string) {
+  return (name !== 'svg' && SVG_TAGS_MAP[name]) || false;
 }
 
 export function setOptionsConfig(options: Partial<inlineCssPxToRemOptions>) {
@@ -255,21 +128,21 @@ export function getBaseFontSize(): number {
 }
 
 const NO_UNIT_PROPERTYS = [
-  "opacity",
-  "zIndex",
-  "fontWeight",
-  "flexGrow",
-  "flexShrink",
-  "order",
-  "gridRow",
-  "gridColumn",
-  "gridArea",
-  "gridTemplateColumns",
-  "gridTemplateRows",
-  "gridTemplateAreas",
-  "tabSize",
-  "orphans",
-  "widows",
+  'opacity',
+  'zIndex',
+  'fontWeight',
+  'flexGrow',
+  'flexShrink',
+  'order',
+  'gridRow',
+  'gridColumn',
+  'gridArea',
+  'gridTemplateColumns',
+  'gridTemplateRows',
+  'gridTemplateAreas',
+  'tabSize',
+  'orphans',
+  'widows',
 ];
 
 const NO_UNIT_PROPERTYS_MAP = NO_UNIT_PROPERTYS.reduce((acc, key) => {
@@ -289,35 +162,41 @@ export function isIgnoreUnitProperty(property: string): boolean {
 }
 
 export function covertLineHeightPropertyToRem<V extends string | number>(
-  value: V
+  value: V,
 ): V {
-  if (typeof value === "string" && value.endsWith("px")) {
-    const pxValue = parseFloat(value.replace("px", ""));
+  if (typeof value === 'string' && value.endsWith('px')) {
+    const pxValue = parseFloat(value.replace('px', ''));
     return pxtorem(pxValue) as V;
   }
   return value;
 }
 
 export function pxtorem(value: number): string {
-  if (value === 0) return "0";
-  if (getOptionsConfig().minPixelValue && value < getOptionsConfig().minPixelValue) {
+  if (value === 0) return '0';
+  if (
+    getOptionsConfig().minPixelValue &&
+    value < getOptionsConfig().minPixelValue
+  ) {
     return `${value}px`;
   }
   return `${(value / getBaseFontSize()).toFixed(
-    getOptionsConfig().unitPrecision
+    getOptionsConfig().unitPrecision,
   )}rem`;
 }
 
 export const PX_VALUE_REG = /(\d*(\.\d+)?)px/g;
+export const NUMBER_REG = /^-?\d+(\.\d+)?$/;
 
 export function covertStringPropertyToRem(value: string): string {
-  return value?.replace(PX_VALUE_REG, (_, p1) => {
-    return pxtorem(parseFloat(p1));
-  }) || '';
+  return (
+    value?.replace(PX_VALUE_REG, (_, p1) => {
+      return pxtorem(parseFloat(p1));
+    }) || ''
+  );
 }
 
 export function isStyleAttribute(name: string) {
-  return name === "style";
+  return name === 'style';
 }
 
 const CUSTOM_COMPONENT_REG = /^[A-Z]/;
@@ -328,7 +207,7 @@ export function isCustomComponent(name: string): boolean {
 
 export function covertStylePropertyToRem(
   value: string | number,
-  key?: string
+  key?: string,
 ): string | number {
   if (key) {
     const covertFn = SPECIAL_PROPERTYS_COVERTER[key];
@@ -336,15 +215,25 @@ export function covertStylePropertyToRem(
       return covertFn(value) as string;
     }
   }
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     return pxtorem(value);
+  }
+  return covertStringPropertyToRem(value);
+}
+
+function coverAttrValueToRem(value: number | string): string {
+  if (typeof value === 'number') {
+    return pxtorem(value);
+  }
+  if (NUMBER_REG.test(value)) {
+    return pxtorem(parseFloat(value));
   }
   return covertStringPropertyToRem(value);
 }
 
 export function covertJsxStyleToRem(
   style: Record<string, any>,
-  tag?: any
+  tag?: any,
 ): Record<string, string> {
   if (!style) return style;
   if (tag && (typeof tag !== 'string' || !isNeedTranform(tag))) return style;
@@ -362,13 +251,36 @@ export function covertJsxStyleToRem(
   return style;
 }
 
-export function covertJsxPropsToRem(props: Record<string, any>, tag?: any) {
-  if (!props || !("style" in props)) return props;
-  if (tag && (typeof tag !== 'string' || !isNeedTranform(tag))) return props;
-  props.style = covertJsxStyleToRem(props.style);
+export function covertJsxPropsToRem(tag: any, props: Record<string, any> | undefined | null, propsInfo: Record<string, any> | undefined | null) {
+  if (!props) return props;
+  if (typeof tag !== 'string' || !isNeedTranform(tag))
+    return props;
+  const shouldTransform = getOptionsConfig().shouldTransform;
+  if (shouldTransform && !shouldTransform(tag, props, propsInfo || props)) {
+    return props;
+  }
+  if (props.style) {
+    props.style = covertJsxStyleToRem(props.style, tag);
+  }
+
+  if (props.width) {
+    props.width = coverAttrValueToRem(props.width);
+  }
+  if (props.height) {
+    props.height = coverAttrValueToRem(props.height);
+  }
   return props;
 }
 
+export function covertJsxCloneElementPropsToRem(
+  element: { type: any, props?: Record<string, any> },
+  props: Record<string, any>,
+) {
+  if (!props || !element.type) return props;
+  if (typeof element.type !== 'string') return props;
+  return covertJsxPropsToRem(element.type, props, element.props);
+}
+
 export function isNeedTranform(tagName: string) {
-  return tagName && !isCustomComponent(tagName) && !isSvgTag(tagName);
+  return tagName && !isCustomComponent(tagName) && !isSvgChildTag(tagName);
 }

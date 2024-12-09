@@ -18,17 +18,14 @@ Add the plugin to your Babel configuration file:
 {
   "presets": ["@babel/preset-react"],
   "plugins": [
-    ["babel-plugin-jsx-style-px-to-rem", {
-      "rootValue": 16,
-      "unitPrecision": 5,
-      "minPixelValue": 2
-    }]
+    "babel-plugin-jsx-style-px-to-rem"
   ]
 }
 ```
 
 ## Note
-To convert third-party React component libraries in `node_modules`, you can use the `nodeModulesInclude` helper function (used with webpack) to include React component libraries. `The `nodeModulesInclude` function works by reading the third-party `package.json` and filtering in libraries that have `react` in their `dependencies` or `peerDependencies`.`
+
+To convert third-party React component libraries in `node_modules`, you can use the `nodeModulesInclude` helper function (used with webpack) to include React component libraries. `The `nodeModulesInclude`function works by reading the third-party`package.json`and filtering in libraries that have`react`in their`dependencies`or`peerDependencies`.`
 
 ```tsx
 // webpack.config.js
@@ -39,12 +36,7 @@ module.exports = {
       {
         test: /\.m?jsx?$/,
         include: [nodeModulesInclude],
-        loader: 'babel-plugin-jsx-style-px-to-rem',
-        options: {
-          rootValue: 16,
-          unitPrecision: 5,
-          minPixelValue: 2,
-        },
+        loader: 'babel-plugin-jsx-style-px-to-rem'
       },
     ],
   },
@@ -60,23 +52,152 @@ config.module
   .loader('babel-loader')
   .options({
     plugins: [
-      [
-        'babel-plugin-style-px-to-tem',
-        {
-          rootValue: 16,
-          unitPrecision: 3,
-          minPixelValue: 1,
-        },
-      ],
+      'babel-plugin-style-px-to-tem'
     ],
   });
 ```
 
 ## Configuration Options
 
+```tsx
+export interface inlineCssPxToRemOptions {
+  rootValue?: number;
+  unitPrecision?: number;
+  minPixelValue?: number;
+  shouldTransform?: (
+    tagName: string,
+    props: Record<string, any> | undefined | null, // props needs to covert
+    originalProps: Record<string, any> | undefined | null,
+  ) => boolean;
+}
+```
 - `rootValue`: The root element font size, default is `16`.
 - `unitPrecision`: The decimal precision for the converted `rem` units, default is `5`.
 - `minPixelValue`: The minimum pixel value to convert, default is `1`.
+- `shouldTransform`: controls whether px values should be converted to rem.
+
+Configuration options can only be set at runtime and cannot be set through Babel's configuration options for now.
+
+```tsx
+// entry file eg: index.ts/index.js (app.ts/app.js)
+import { setOptionsConfig } from 'babel-plugin-jsx-style-px-to-tem/dist/lib/utils';
+setOptionsConfig({
+  rootValue: 16,
+  unitPrecision: 5,
+  minPixelValue: 1,
+});
+```
+
+## shouldTransform
+
+Use the `shouldTransform` function to control whether `px` values should be converted to `rem`. The function returns a boolean value, where returning `true` indicates that the conversion should occur, and returning `false` indicates that the conversion should not occur.
+
+```tsx
+// babel.config.js
+module.exports = {
+  presets: ['@babel/preset-react'],
+  plugins: ['babel-plugin-jsx-style-px-to-rem'],
+};
+
+// entry file eg: index.ts/index.js (app.ts/app.js)
+import { setOptionsConfig } from 'babel-plugin-jsx-style-px-to-tem/dist/lib/utils';
+setOptionsConfig({
+  rootValue: 16,
+  unitPrecision: 5,
+  minPixelValue: 1,
+  shouldTransform: (tagName, props, originalProps) => {
+    const className = props?.className || originalProps?.className;
+    if (className?.includes('ant-wave')) {
+      return false;
+    }
+    return true;
+  }
+});
+```
+
+For example, in the case of the antd UI component library, some styles are dynamically calculated (e.g., `through js API like element.style.left = element.offsetLeft + 'px'`). These styles should not be converted to `rem`. In such cases, you can control this using the `shouldTransform` function.
+```tsx
+const IGNORE_CLASS_NAMES: Array<
+  | string
+  | {
+      className: string;
+      exact?: boolean;
+    }
+> = [
+  {
+    className: 'ant-wave',
+    exact: true,
+  },
+  {
+    className: 'ant-select-dropdown',
+    exact: true,
+  },
+  {
+    className: 'ant-dropdown',
+    exact: true,
+  },
+  {
+    className: 'ant-popover',
+    exact: true,
+  },
+  {
+    className: 'ant-tooltip',
+    exact: true,
+  },
+  {
+    className: 'ant-message',
+    exact: true,
+  },
+  'ant-motion-collapse',
+  'ant-zoom',
+  'ant-fade',
+  'collapse-animation',
+];
+
+// 这个函数可以直接导入如 `import { createShouldTransformFunctionWithIgnoreClassNames } from 'babel-plugin-jsx-style-px-to-rem'`
+function createShouldTransformFunctionWithIgnoreClassNames(ignoreClassNames: Array<
+  | string
+  | {
+      className: string;
+      exact?: boolean;
+    }
+>) {
+  const ignoreClassNamesReg = ignoreClassNames.map((cls) => {
+    if (typeof cls === 'string') {
+      return new RegExp(cls);
+    }
+    if (cls.exact) {
+      return new RegExp(`\\b${cls.className}\\b`);
+    }
+    return new RegExp(cls.className);
+  });
+  return (_, props, originalProps) => {
+    const className = props?.className || originalProps?.className;
+    if (
+      className &&
+      ignoreClassNamesReg.some((reg) => reg.test(className))
+    ) {
+      return false;
+    }
+    return true;
+  };
+}
+module.exports = {
+  presets: ['@babel/preset-react'],
+  plugins: [
+    'babel-plugin-jsx-style-px-to-rem',
+  ],
+};
+
+// entry file index.ts/index.js (app.ts/app.js)
+import { setOptionsConfig, createShouldTransformFunctionWithIgnoreClassNames } from 'babel-plugin-jsx-style-px-to-tem/dist/lib/utils';
+setOptionsConfig({
+  rootValue: 16,
+  unitPrecision: 5,
+  minPixelValue: 1,
+  shouldTransform: createShouldTransformFunctionWithIgnoreClassNames(IGNORE_CLASS_NAMES);
+});
+```
 
 ## License
 

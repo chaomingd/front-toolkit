@@ -16,14 +16,7 @@ npm install --save-dev babel-plugin-jsx-style-px-to-rem @babel/core @babel/prese
 {
   "presets": ["@babel/preset-react"],
   "plugins": [
-    [
-      "babel-plugin-jsx-style-px-to-rem",
-      {
-        "rootValue": 16,
-        "unitPrecision": 5,
-        "minPixelValue": 2
-      }
-    ]
+    "babel-plugin-jsx-style-px-to-rem"
   ]
 }
 ```
@@ -43,11 +36,6 @@ module.exports = {
         test: /\.m?jsx?$/,
         include: [nodeModulesInclude],
         loader: 'babel-plugin-style-px-to-tem',
-        options: {
-          rootValue: 16,
-          unitPrecision: 5,
-          minPixelValue: 2,
-        },
       },
     ],
   },
@@ -63,14 +51,7 @@ config.module
   .loader('babel-loader')
   .options({
     plugins: [
-      [
-        'babel-plugin-style-px-to-tem',
-        {
-          rootValue: 16,
-          unitPrecision: 3,
-          minPixelValue: 1,
-        },
-      ],
+      'babel-plugin-style-px-to-tem',
     ],
   });
 ```
@@ -80,3 +61,118 @@ config.module
 - `rootValue`: The root element font size, default is `16`.
 - `unitPrecision`: The decimal precision for the converted `rem` units, default is `5`.
 - `minPixelValue`: The minimum pixel value to convert, default is `1`.
+- `shouldTransform`: controls whether px values should be converted to rem.
+
+设置配置选项只能在运行时设置，暂时无法通过 babel 的配置选项设置
+
+```tsx
+// 入口文件 index.ts/index.js (app.ts/app.js)
+import { setOptionsConfig } from 'babel-plugin-jsx-style-px-to-tem/dist/lib/utils';
+setOptionsConfig({
+  rootValue: 16,
+  unitPrecision: 5,
+  minPixelValue: 1,
+});
+```
+
+## shouldTransform
+
+使用 shouldTransform 函数来控制是否需要转换 rem. 该函数的返回值是布尔值，当返回 true 是表示需要转换，否则无需转换 rem.
+
+```tsx
+// babel.config.js
+module.exports = {
+  presets: ['@babel/preset-react'],
+  plugins: ['babel-plugin-jsx-style-px-to-rem'],
+};
+
+// 入口文件 index.ts/index.js (app.ts/app.js)
+import { setOptionsConfig } from 'babel-plugin-jsx-style-px-to-tem/dist/lib/utils';
+setOptionsConfig({
+  rootValue: 16,
+  unitPrecision: 5,
+  minPixelValue: 1,
+  shouldTransform: (tagName, props, originalProps) => {
+    const className = props?.className || originalProps?.className;
+    if (className?.includes('ant-wave')) {
+      return false;
+    }
+    return true;
+  }
+});
+```
+
+举个实际的案例，对于 antd UI 组件库，有些样式是动态计算出来的（`通过js API如element.style.left = element.offsetLeft + 'px'`) 这些样式不应该转换成 rem，这时就可以通过 shouldTransform 函数控制
+
+```tsx
+const IGNORE_CLASS_NAMES: Array<
+  | string
+  | {
+      className: string;
+      exact?: boolean;
+    }
+> = [
+  {
+    className: 'ant-wave',
+    exact: true,
+  },
+  {
+    className: 'ant-select-dropdown',
+    exact: true,
+  },
+  {
+    className: 'ant-dropdown',
+    exact: true,
+  },
+  {
+    className: 'ant-popover',
+    exact: true,
+  },
+  {
+    className: 'ant-tooltip',
+    exact: true,
+  },
+  {
+    className: 'ant-message',
+    exact: true,
+  },
+  'ant-motion-collapse',
+  'ant-zoom',
+  'ant-fade',
+  'collapse-animation',
+];
+
+// 这个函数可以直接导入如 `import { createShouldTransformFunctionWithIgnoreClassNames } from 'babel-plugin-jsx-style-px-to-rem'`
+function createShouldTransformFunctionWithIgnoreClassNames(ignoreClassNames) {
+  const ignoreClassNamesReg = IGNORE_CLASS_NAMES.map((cls) => {
+    if (typeof cls === 'string') {
+      return new RegExp(cls);
+    }
+    if (cls.exact) {
+      return new RegExp(`\\b${cls.className}\\b`);
+    }
+    return new RegExp(cls.className);
+  });
+  return (_, props, originalProps) => {
+    const className = props?.className || originalProps?.className;
+    if (className && ignoreClassNamesReg.some((reg) => reg.test(className))) {
+      return false;
+    }
+    return true;
+  };
+}
+module.exports = {
+  presets: ['@babel/preset-react'],
+  plugins: ['babel-plugin-jsx-style-px-to-rem'],
+};
+
+
+// 入口文件 index.ts/index.js (app.ts/app.js)
+import { setOptionsConfig, createShouldTransformFunctionWithIgnoreClassNames } from 'babel-plugin-jsx-style-px-to-tem/dist/lib/utils';
+setOptionsConfig({
+  rootValue: 16,
+  unitPrecision: 5,
+  minPixelValue: 1,
+  shouldTransform: createShouldTransformFunctionWithIgnoreClassNames(IGNORE_CLASS_NAMES);
+});
+```

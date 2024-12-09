@@ -1,5 +1,11 @@
 # babel-plugin-style-px-to-tem
 
+## 0.2.6
+
+### Patch Changes
+
+- change:version
+
 ## 0.2.5
 
 ### Patch Changes

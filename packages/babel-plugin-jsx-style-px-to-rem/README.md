@@ -158,7 +158,10 @@ const IGNORE_CLASS_NAMES: Array<
   'collapse-animation',
 ];
 
-// 这个函数可以直接导入如 `import { createShouldTransformFunctionWithIgnoreClassNames } from 'babel-plugin-jsx-style-px-to-rem'`
+/**
+ * 
+ * This function can be directly imported as `import createShouldTransformFunctionWithIgnoreClassNames } from 'babel-plugin-jsx-style-px-to-rem'
+*/
 function createShouldTransformFunctionWithIgnoreClassNames(ignoreClassNames: Array<
   | string
   | {

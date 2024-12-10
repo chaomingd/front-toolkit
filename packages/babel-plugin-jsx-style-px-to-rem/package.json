@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-jsx-style-px-to-rem",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "keywords": [
     "px to rem",
     "rem",

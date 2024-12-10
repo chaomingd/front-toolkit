@@ -105,7 +105,10 @@ setOptionsConfig({
   rootValue: 16,
   unitPrecision: 5,
   minPixelValue: 1,
-  shouldTransform: (tagName, props, originalProps) => {
+  shouldTransform: (tagName, props, originalProps, isSvgChildElementTag) => {
+    if (isSvgChildElementTag) { // svg child element should not be tranform
+      return false;
+    }
     const className = props?.className || originalProps?.className;
     if (className?.includes('ant-wave')) {
       return false;
@@ -171,7 +174,10 @@ function createShouldTransformFunctionWithIgnoreClassNames(ignoreClassNames: Arr
     }
     return new RegExp(cls.className);
   });
-  return (_, props, originalProps) => {
+  return (_, props, originalProps, isSvgChildElementTag) => {
+    if (isSvgChildElementTag) { // svg child element should not be tranform
+      return false;
+    }
     const className = props?.className || originalProps?.className;
     if (
       className &&

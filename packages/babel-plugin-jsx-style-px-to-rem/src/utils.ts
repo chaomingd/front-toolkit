@@ -12,6 +12,7 @@ export interface inlineCssPxToRemOptions {
     tagName: string,
     props: Record<string, any> | undefined | null,
     originalProps: Record<string, any> | undefined | null,
+    isSvgChildElementTag: boolean,
   ) => boolean;
 }
 
@@ -233,10 +234,8 @@ function coverAttrValueToRem(value: number | string): string {
 
 export function covertJsxStyleToRem(
   style: Record<string, any>,
-  tag?: any,
 ): Record<string, string> {
   if (!style) return style;
-  if (tag && (typeof tag !== 'string' || !isNeedTranform(tag))) return style;
   // const newStyle: Record<string, any> = {};
   Object.keys(style).forEach((key) => {
     if (isIgnoreUnitProperty(key)) {
@@ -253,14 +252,22 @@ export function covertJsxStyleToRem(
 
 export function covertJsxPropsToRem(tag: any, props: Record<string, any> | undefined | null, propsInfo: Record<string, any> | undefined | null) {
   if (!props) return props;
-  if (typeof tag !== 'string' || !isNeedTranform(tag))
+  if (typeof tag !== 'string')
     return props;
+  const isSvgChildElementTag = isSvgChildTag(tag);
   const shouldTransform = getOptionsConfig().shouldTransform;
-  if (shouldTransform && !shouldTransform(tag, props, propsInfo || props)) {
-    return props;
+  if (shouldTransform) {
+    if (!shouldTransform(tag, props, propsInfo || props, isSvgChildElementTag)) {
+      return props;
+    }
+  } else {
+    if (isSvgChildElementTag) {
+      return props;
+    }
   }
+  
   if (props.style) {
-    props.style = covertJsxStyleToRem(props.style, tag);
+    props.style = covertJsxStyleToRem(props.style);
   }
 
   if (props.width) {
@@ -281,6 +288,3 @@ export function covertJsxCloneElementPropsToRem(
   return covertJsxPropsToRem(element.type, props, element.props);
 }
 
-export function isNeedTranform(tagName: string) {
-  return tagName && !isCustomComponent(tagName) && !isSvgChildTag(tagName);
-}

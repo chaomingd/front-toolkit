@@ -1,5 +1,11 @@
 # babel-plugin-style-px-to-tem
 
+## 0.2.9
+
+### Patch Changes
+
+- 增加 isSvgChildElementTag 参数
+
 ## 0.2.8
 
 ### Patch Changes

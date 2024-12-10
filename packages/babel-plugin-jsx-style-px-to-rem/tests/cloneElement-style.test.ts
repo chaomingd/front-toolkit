@@ -17,7 +17,7 @@ describe('cloneElement-style', () => {
       React.cloneElement(element, {...{ style: props.style }});
     `;
     const output = transform(input);
-    console.log(output)
+    // console.log(output)
     expect(output).toMatch(/covertJsxCloneElementPropsToRem[\s\S]*props.style/);
   });
 

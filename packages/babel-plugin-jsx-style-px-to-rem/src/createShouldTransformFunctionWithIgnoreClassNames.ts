@@ -16,7 +16,10 @@ export function createShouldTransformFunctionWithIgnoreClassNames(
     }
     return new RegExp(cls.className);
   });
-  return (_: string, props: Record<string, any> | undefined | null, originalProps: Record<string, any> | undefined | null) => {
+  return (_: string, props: Record<string, any> | undefined | null, originalProps: Record<string, any> | undefined | null, isSvgChildElementTag: boolean) => {
+    if (isSvgChildElementTag) {
+      return false;
+    }
     const className = props?.className || originalProps?.className;
     if (className && ignoreClassNamesReg.some((reg) => reg.test(className))) {
       return false;

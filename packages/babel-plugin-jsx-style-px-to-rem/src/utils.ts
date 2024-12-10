@@ -236,18 +236,20 @@ export function covertJsxStyleToRem(
   style: Record<string, any>,
 ): Record<string, string> {
   if (!style) return style;
-  // const newStyle: Record<string, any> = {};
+  const newStyle: Record<string, any> = {};
   Object.keys(style).forEach((key) => {
     if (isIgnoreUnitProperty(key)) {
+      newStyle[key] = style[key];
       return;
     }
     const value = style[key];
     if (!value) {
+      newStyle[key] = value;
       return;
     }
-    style[key] = covertStylePropertyToRem(value, key);
+    newStyle[key] = covertStylePropertyToRem(value, key);
   });
-  return style;
+  return newStyle;
 }
 
 export function covertJsxPropsToRem(tag: any, props: Record<string, any> | undefined | null, propsInfo: Record<string, any> | undefined | null) {
@@ -265,7 +267,7 @@ export function covertJsxPropsToRem(tag: any, props: Record<string, any> | undef
       return props;
     }
   }
-  
+
   if (props.style) {
     props.style = covertJsxStyleToRem(props.style);
   }

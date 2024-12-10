@@ -68,6 +68,7 @@ export interface inlineCssPxToRemOptions {
     tagName: string,
     props: Record<string, any> | undefined | null, // props needs to covert
     originalProps: Record<string, any> | undefined | null,
+    isSvgChildElementTag: boolean
   ) => boolean;
 }
 ```

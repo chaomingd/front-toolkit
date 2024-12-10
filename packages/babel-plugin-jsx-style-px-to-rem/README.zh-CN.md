@@ -58,6 +58,19 @@ config.module
 
 ## 配置选项
 
+```tsx
+export interface inlineCssPxToRemOptions {
+  rootValue?: number;
+  unitPrecision?: number;
+  minPixelValue?: number;
+  shouldTransform?: (
+    tagName: string,
+    props: Record<string, any> | undefined | null, // props needs to covert
+    originalProps: Record<string, any> | undefined | null,
+    isSvgChildElementTag: boolean
+  ) => boolean;
+}
+```
 - `rootValue`: The root element font size, default is `16`.
 - `unitPrecision`: The decimal precision for the converted `rem` units, default is `5`.
 - `minPixelValue`: The minimum pixel value to convert, default is `1`.
@@ -92,7 +105,10 @@ setOptionsConfig({
   rootValue: 16,
   unitPrecision: 5,
   minPixelValue: 1,
-  shouldTransform: (tagName, props, originalProps) => {
+  shouldTransform: (tagName, props, originalProps, isSvgChildElementTag) => {
+    if (isSvgChildElementTag) { // svg child element should not be tranform
+      return false;
+    }
     const className = props?.className || originalProps?.className;
     if (className?.includes('ant-wave')) {
       return false;
@@ -153,7 +169,10 @@ function createShouldTransformFunctionWithIgnoreClassNames(ignoreClassNames) {
     }
     return new RegExp(cls.className);
   });
-  return (_, props, originalProps) => {
+  return (_, props, originalProps, isSvgChildElementTag) => {
+    if (isSvgChildElementTag) { // svg child element should not be tranform
+      return false;
+    }
     const className = props?.className || originalProps?.className;
     if (className && ignoreClassNamesReg.some((reg) => reg.test(className))) {
       return false;

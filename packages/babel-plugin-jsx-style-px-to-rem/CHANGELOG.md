@@ -1,5 +1,11 @@
 # babel-plugin-style-px-to-tem
 
+## 0.2.10
+
+### Patch Changes
+
+- 修复 style 重新赋值报错问题，改为复制"
+
 ## 0.2.9
 
 ### Patch Changes

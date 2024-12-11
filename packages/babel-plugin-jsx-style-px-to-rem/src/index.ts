@@ -1,10 +1,10 @@
 import { NodePath, types as babelTypes, template } from '@babel/core';
-import pathLib from 'path';
+// import pathLib from 'path';
 export * from './nodeModulesInclude';
 
 let shouldImportHelpFunction = false;
 
-const LIB_NAME = pathLib.resolve(__dirname, './utils.js');
+const LIB_NAME = 'babel-plugin-jsx-style-px-to-rem/dist/lib/utils.js';
 const COVERT_JSX_PROPS_TO_REM = 'covertJsxPropsToRem';
 const COVERT_JSX_PROPS_TO_REM_ALIAS = '__jsx_inline_covertJsxPropsToRem';
 const COVERT_JSX_CLONE_ELEMENT_PROPS_TO_REM = 'covertJsxCloneElementPropsToRem';
@@ -73,8 +73,8 @@ export default function () {
                     return;
                   }
                 }
-                const tagNamePath = path.get('arguments').at(0) as NodePath;
-                const propsPath = path.get('arguments').at(1) as NodePath;
+                const tagNamePath = path.get('arguments')[0] as NodePath;
+                const propsPath = path.get('arguments')[1] as NodePath;
                 if (
                   !tagNamePath ||
                   !tagNamePath.node ||
@@ -94,17 +94,18 @@ export default function () {
             },
           });
           if (shouldImportHelpFunction) {
-            const buildFunction = template(
-              `import { COVERT_JSX_PROPS_TO_REM as ${COVERT_JSX_PROPS_TO_REM_ALIAS}, COVERT_JSX_CLONE_ELEMENT_PROPS_TO_REM as ${COVERT_JSX_CLONE_ELEMENT_PROPS_TO_REM_ALIAS} } from 'SOURCE';\n`,
-            );
-            path.unshiftContainer(
-              'body',
-              buildFunction({
-                COVERT_JSX_PROPS_TO_REM,
-                COVERT_JSX_CLONE_ELEMENT_PROPS_TO_REM,
-                SOURCE: LIB_NAME,
-              }),
-            );
+            const isESModule = path.node.sourceType === 'module';
+            if (isESModule) {
+              const buildFunction = template(
+                `import { ${COVERT_JSX_PROPS_TO_REM} as ${COVERT_JSX_PROPS_TO_REM_ALIAS}, ${COVERT_JSX_CLONE_ELEMENT_PROPS_TO_REM} as ${COVERT_JSX_CLONE_ELEMENT_PROPS_TO_REM_ALIAS} } from '${LIB_NAME}';\n`,
+              );
+              path.unshiftContainer('body', buildFunction());
+            } else {
+              const buildFunction = template(
+                `const { ${COVERT_JSX_PROPS_TO_REM}: ${COVERT_JSX_PROPS_TO_REM_ALIAS}, ${COVERT_JSX_CLONE_ELEMENT_PROPS_TO_REM}: ${COVERT_JSX_CLONE_ELEMENT_PROPS_TO_REM_ALIAS} } = require('${LIB_NAME}');\n`,
+              );
+              path.unshiftContainer('body', buildFunction());
+            }
           }
         },
       },

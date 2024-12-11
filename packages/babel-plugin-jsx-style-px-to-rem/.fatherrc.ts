@@ -2,13 +2,10 @@ import { defineConfig } from 'father';
 
 export default defineConfig({
   extends: '../../.fatherrc.ts',
-  umd: {
-    output: 'dist/umd',
-    name: 'BabelPluginJsxStylePxToRem'
-  },
+  umd: undefined,
+  esm: undefined,
   cjs: {
     output: 'dist/lib',
     transformer: 'babel',
   },
-  esm: undefined,
 });

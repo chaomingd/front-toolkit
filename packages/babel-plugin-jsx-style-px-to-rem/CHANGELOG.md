@@ -1,5 +1,11 @@
 # babel-plugin-style-px-to-tem
 
+## 0.2.12
+
+### Patch Changes
+
+- 修复不同模块导入时 exports in not defined 或者 require is not defined 的问题
+
 ## 0.2.11
 
 ### Patch Changes

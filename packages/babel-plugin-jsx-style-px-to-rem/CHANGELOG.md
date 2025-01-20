@@ -1,5 +1,11 @@
 # babel-plugin-style-px-to-tem
 
+## 0.2.13
+
+### Patch Changes
+
+- 增加 onUpdateProps
+
 ## 0.2.12
 
 ### Patch Changes

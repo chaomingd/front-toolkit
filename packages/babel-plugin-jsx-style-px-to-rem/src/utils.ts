@@ -14,6 +14,10 @@ export interface inlineCssPxToRemOptions {
     originalProps: Record<string, any> | undefined | null,
     isSvgChildElementTag: boolean,
   ) => boolean;
+  onUpdateProps?: (
+    props: Record<string, any> | undefined | null,
+    originalProps: Record<string, any> | undefined | null,
+  ) => Record<string, any> | null;
 }
 
 export let optionsConfig: inlineCssPxToRemOptions = {
@@ -29,82 +33,82 @@ declare global {
 }
 
 const SVG_TAGS = [
-  "a",
-  "animate",
-  "animateMotion",
-  "animateTransform",
-  "circle",
-  "clipPath",
-  "cursor",
-  "defs",
-  "desc",
-  "ellipse",
-  "feBlend",
-  "feColorMatrix",
-  "feComponentTransfer",
-  "feComposite",
-  "feConvolveMatrix",
-  "feDiffuseLighting",
-  "feDisplacementMap",
-  "feDistantLight",
-  "feDropShadow",
-  "feFlood",
-  "feFuncA",
-  "feFuncB",
-  "feFuncG",
-  "feFuncR",
-  "feGaussianBlur",
-  "feImage",
-  "feMerge",
-  "feMergeNode",
-  "feMorphology",
-  "feOffset",
-  "fePointLight",
-  "feSpecularLighting",
-  "feSpotLight",
-  "feTile",
-  "feTurbulence",
-  "filter",
-  "font",
-  "font-face",
-  "font-face-format",
-  "font-face-name",
-  "font-face-src",
-  "font-face-uri",
-  "foreignObject",
-  "g",
-  "glyph",
-  "glyphRef",
-  "hkern",
-  "image",
-  "line",
-  "linearGradient",
-  "marker",
-  "mask",
-  "metadata",
-  "missing-glyph",
-  "mpath",
-  "path",
-  "pattern",
-  "polygon",
-  "polyline",
-  "radialGradient",
-  "rect",
-  "script",
-  "set",
-  "stop",
-  "style",
-  "svg",
-  "switch",
-  "symbol",
-  "text",
-  "textPath",
-  "title",
-  "tref",
-  "tspan",
-  "use",
-  "view",
-  "vkern"
+  'a',
+  'animate',
+  'animateMotion',
+  'animateTransform',
+  'circle',
+  'clipPath',
+  'cursor',
+  'defs',
+  'desc',
+  'ellipse',
+  'feBlend',
+  'feColorMatrix',
+  'feComponentTransfer',
+  'feComposite',
+  'feConvolveMatrix',
+  'feDiffuseLighting',
+  'feDisplacementMap',
+  'feDistantLight',
+  'feDropShadow',
+  'feFlood',
+  'feFuncA',
+  'feFuncB',
+  'feFuncG',
+  'feFuncR',
+  'feGaussianBlur',
+  'feImage',
+  'feMerge',
+  'feMergeNode',
+  'feMorphology',
+  'feOffset',
+  'fePointLight',
+  'feSpecularLighting',
+  'feSpotLight',
+  'feTile',
+  'feTurbulence',
+  'filter',
+  'font',
+  'font-face',
+  'font-face-format',
+  'font-face-name',
+  'font-face-src',
+  'font-face-uri',
+  'foreignObject',
+  'g',
+  'glyph',
+  'glyphRef',
+  'hkern',
+  'image',
+  'line',
+  'linearGradient',
+  'marker',
+  'mask',
+  'metadata',
+  'missing-glyph',
+  'mpath',
+  'path',
+  'pattern',
+  'polygon',
+  'polyline',
+  'radialGradient',
+  'rect',
+  'script',
+  'set',
+  'stop',
+  'style',
+  'svg',
+  'switch',
+  'symbol',
+  'text',
+  'textPath',
+  'title',
+  'tref',
+  'tspan',
+  'use',
+  'view',
+  'vkern',
 ];
 
 const SVG_TAGS_MAP = SVG_TAGS.reduce((acc, tag) => {
@@ -252,14 +256,24 @@ export function covertJsxStyleToRem(
   return newStyle;
 }
 
-export function covertJsxPropsToRem(tag: any, props: Record<string, any> | undefined | null, propsInfo: Record<string, any> | undefined | null) {
+export function covertJsxPropsToRem(
+  tag: any,
+  props: Record<string, any> | undefined | null,
+  propsInfo: Record<string, any> | undefined | null,
+) {
   if (!props) return props;
-  if (typeof tag !== 'string')
-    return props;
+  if (typeof tag !== 'string') return props;
+  const newProps = getOptionsConfig().onUpdateProps?.(props, propsInfo);
+  if (newProps) {
+    // eslint-disable-next-line no-param-reassign
+    props = Object.assign({}, props, newProps);
+  }
   const isSvgChildElementTag = isSvgChildTag(tag);
   const shouldTransform = getOptionsConfig().shouldTransform;
   if (shouldTransform) {
-    if (!shouldTransform(tag, props, propsInfo || props, isSvgChildElementTag)) {
+    if (
+      !shouldTransform(tag, props, propsInfo || props, isSvgChildElementTag)
+    ) {
       return props;
     }
   } else {
@@ -282,11 +296,10 @@ export function covertJsxPropsToRem(tag: any, props: Record<string, any> | undef
 }
 
 export function covertJsxCloneElementPropsToRem(
-  element: { type: any, props?: Record<string, any> },
+  element: { type: any; props?: Record<string, any> },
   props: Record<string, any>,
 ) {
   if (!props || !element.type) return props;
   if (typeof element.type !== 'string') return props;
   return covertJsxPropsToRem(element.type, props, element.props);
 }
-

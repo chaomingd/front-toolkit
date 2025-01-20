@@ -15,6 +15,7 @@ export interface inlineCssPxToRemOptions {
     isSvgChildElementTag: boolean,
   ) => boolean;
   onUpdateProps?: (
+    tag: string,
     props: Record<string, any> | undefined | null,
     originalProps: Record<string, any> | undefined | null,
   ) => Record<string, any> | null;
@@ -263,12 +264,13 @@ export function covertJsxPropsToRem(
 ) {
   if (!props) return props;
   if (typeof tag !== 'string') return props;
-  const newProps = getOptionsConfig().onUpdateProps?.(props, propsInfo);
-  if (newProps) {
+  
+  const isSvgChildElementTag = isSvgChildTag(tag);
+  if (!isSvgChildElementTag) {
+    const newProps =  getOptionsConfig().onUpdateProps?.(tag, props, propsInfo);
     // eslint-disable-next-line no-param-reassign
     props = Object.assign({}, props, newProps);
   }
-  const isSvgChildElementTag = isSvgChildTag(tag);
   const shouldTransform = getOptionsConfig().shouldTransform;
   if (shouldTransform) {
     if (

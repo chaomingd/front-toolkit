@@ -1,5 +1,11 @@
 # babel-plugin-style-px-to-tem
 
+## 0.2.14
+
+### Patch Changes
+
+- onUpdateProps 忽略 svg
+
 ## 0.2.13
 
 ### Patch Changes
